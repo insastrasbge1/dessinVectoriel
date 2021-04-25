@@ -18,6 +18,8 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.insa.beuvron.cours.m2.tutoVideoDessin;
 
+import java.io.IOException;
+import java.io.Writer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import recup.Lire;
@@ -126,6 +128,15 @@ public class Point extends FigureSimple {
     public void dessineSelection(GraphicsContext context) {
         context.setFill(Figure.COULEUR_SELECTION);
         context.fillOval(this.px-RAYON_IN_DRAW, this.py-RAYON_IN_DRAW, 2*RAYON_IN_DRAW, 2*RAYON_IN_DRAW);
+    }
+
+    @Override
+    public void save(Writer w, Numeroteur<Figure> num) throws IOException {
+        if(! num.objExist(this)) {
+            int id = num.creeID(this);
+            w.append("Point;"+id+";"+this.px+";"+this.py+
+                    ";" + FigureSimple.saveColor(this.getCouleur()) + "\n");
+        }
     }
 
 }

@@ -44,5 +44,17 @@ public abstract class FigureSimple extends Figure {
     public void changeCouleur(Color value) {
         this.setCouleur(value);
     }
+    
+    public static String saveColor(Color c) {
+        return c.getRed()+";"+c.getGreen()+";"+c.getBlue();
+    }
+    
+   public static Color parseColor(String sr, String sg, String sb) {
+       double rouge = Double.parseDouble(sr);
+       double vert = Double.parseDouble(sg);
+       double bleu = Double.parseDouble(sb);
+       return Color.color(rouge, vert, bleu);
+    }
+
 
 }

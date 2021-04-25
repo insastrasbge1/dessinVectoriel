@@ -18,6 +18,8 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.insa.beuvron.cours.m2.tutoVideoDessin;
 
+import java.io.IOException;
+import java.io.Writer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -29,6 +31,10 @@ public class Segment extends FigureSimple {
 
     private Point debut;
     private Point fin;
+
+    private Segment() {
+        this(null, null);
+    }
 
     public Segment(Point debut, Point fin, Color couleur) {
         super(couleur);
@@ -112,6 +118,18 @@ public class Segment extends FigureSimple {
     public void dessineSelection(GraphicsContext context) {
         context.setStroke(Figure.COULEUR_SELECTION);
         context.strokeLine(this.debut.getPx(), this.debut.getPy(), this.fin.getPx(), this.fin.getPy());
+    }
+
+    @Override
+    public void save(Writer w, Numeroteur<Figure> num) throws IOException {
+        if (!num.objExist(this)) {
+            int id = num.creeID(this);
+            this.debut.save(w, num);
+            this.fin.save(w, num);
+            w.append("Segment;" + id + ";" +
+                    num.getID(this.debut) + ";" + num.getID(this.fin) +
+                    ";" + FigureSimple.saveColor(this.getCouleur())+"\n");
+        }
     }
 
 }

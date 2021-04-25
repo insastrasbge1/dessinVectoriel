@@ -18,8 +18,13 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.insa.beuvron.cours.m2.tutoVideoDessin;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import recup.Lire;
@@ -290,14 +295,31 @@ public class Groupe extends Figure {
         Groupe gr2 = new Groupe();
         gr2.add(s21);
         gr2.add(s22);
+        gr2.add(gr1);
         System.out.println("Groupe 1 : " + gr1);
         System.out.println("Groupe 2 : " + gr2);
+        try {
+            gr1.sauvegarde(new File("groupe1.txt"));
+            gr2.sauvegarde(new File("groupe2.txt"));
+        } catch (IOException ex) {
+            throw new Error("probleme : " + ex.getMessage());
+        }
+    }
+
+    public static void testLecture() {
+        try {
+            Figure lue = Figure.lecture(new File("groupe2.txt"));
+            System.out.println("fig lue : " + lue);
+        } catch (IOException ex) {
+            throw new Error(ex);
+        }
     }
 
     public static void main(String[] args) {
 //        test1();
 //        testMenu();
-        exempleProblemeSauvegarde();
+//        exempleProblemeSauvegarde();
+        testLecture();
     }
 
     /**
@@ -410,6 +432,21 @@ public class Groupe extends Figure {
     public void changeCouleur(Color value) {
         for (Figure f : this.contient) {
             f.changeCouleur(value);
+        }
+    }
+
+    @Override
+    public void save(Writer w, Numeroteur<Figure> num) throws IOException {
+        if (!num.objExist(this)) {
+            int id = num.creeID(this);
+            for (Figure f : this.contient) {
+                f.save(w, num);
+            }
+            w.append("Groupe;" + id);
+            for (Figure f : this.contient) {
+                w.append(";" + num.getID(f));
+            }
+            w.append("\n");
         }
     }
 
