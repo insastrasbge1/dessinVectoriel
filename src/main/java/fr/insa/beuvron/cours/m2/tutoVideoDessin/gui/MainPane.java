@@ -24,7 +24,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -34,6 +39,16 @@ import javafx.stage.Stage;
  * @author francois
  */
 public class MainPane extends BorderPane {
+
+    /**
+     * multiplicateur pour l'espace de départ : pour ne pas que les bords de la
+     * figure soit confondus avec les bords de la fenêtre, on considère que l'on
+     * veut que la fenêtre puisse contenir une figure MULT_POUR_FIT_ALL fois
+     * plus grande que la figure réelle. Par exemple, si MULT_POUR_FIT_ALL = 2,
+     * la figure complète n'occupera en fait qu'environ la moitié de la fenetre
+     * graphique.
+     */
+    private static double MULT_POUR_FIT_ALL = 1.1;
 
     private Groupe model;
     private Controleur controleur;
@@ -48,7 +63,12 @@ public class MainPane extends BorderPane {
     private Button bGrouper;
     private ColorPicker cpCouleur;
 
+    private Button bZoomDouble;
+    private Button bZoomDemi;
+    private Button bZoomFitAll;
+ 
     private DessinCanvas cDessin;
+    private RectangleHV zoneModelVue;
 
     private MainMenu menu;
 
@@ -64,6 +84,7 @@ public class MainPane extends BorderPane {
         this.inStage = inStage;
         this.curFile = fromFile;
         this.model = model;
+        this.fitAll();
         this.controleur = new Controleur(this);
 
         this.rbSelect = new RadioButton("Select");
@@ -96,7 +117,23 @@ public class MainPane extends BorderPane {
         this.cpCouleur.setOnAction((t) -> {
             this.controleur.changeColor(this.cpCouleur.getValue());
         });
-        VBox vbDroit = new VBox(this.bGrouper, this.cpCouleur);
+
+        this.bZoomDouble = new Button("Zoom x2");
+        this.bZoomDouble.setOnAction((t) -> {
+            this.controleur.zoomDouble();
+        });
+        this.bZoomDemi = new Button("Zoom /2");
+        this.bZoomDemi.setOnAction((t) -> {
+            this.controleur.zoomDemi();
+        });
+        this.bZoomFitAll = new Button("Zoom Fit All");
+        this.bZoomFitAll.setOnAction((t) -> {
+            this.controleur.zoomFitAll();
+        });
+        VBox vbZoom = new VBox(this.bZoomDouble, this.bZoomDemi, this.bZoomFitAll);
+        vbZoom.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
+        VBox vbDroit = new VBox(this.bGrouper, this.cpCouleur, vbZoom);
         this.setRight(vbDroit);
 
         this.cDessin = new DessinCanvas(this);
@@ -107,6 +144,12 @@ public class MainPane extends BorderPane {
 
         this.controleur.changeEtat(20);
 
+    }
+
+    public void fitAll() {
+        this.zoneModelVue = new RectangleHV(this.model.minX(),
+                this.model.maxX(), this.model.minY(), this.model.maxY());
+        this.zoneModelVue = this.zoneModelVue.scale(MULT_POUR_FIT_ALL);
     }
 
     public void redrawAll() {
@@ -188,6 +231,55 @@ public class MainPane extends BorderPane {
      */
     public void setCurFile(File curFile) {
         this.curFile = curFile;
+    }
+
+    /**
+     * @return the MULT_POUR_FIT_ALL
+     */
+    public static double getMULT_POUR_FIT_ALL() {
+        return MULT_POUR_FIT_ALL;
+    }
+
+    /**
+     * @return the bZoomDouble
+     */
+    public Button getbZoomDouble() {
+        return bZoomDouble;
+    }
+
+    /**
+     * @return the bZoomDemi
+     */
+    public Button getbZoomDemi() {
+        return bZoomDemi;
+    }
+
+    /**
+     * @return the bZoomFitAll
+     */
+    public Button getbZoomFitAll() {
+        return bZoomFitAll;
+    }
+
+    /**
+     * @return the zoneModelVue
+     */
+    public RectangleHV getZoneModelVue() {
+        return zoneModelVue;
+    }
+
+    /**
+     * @return the menu
+     */
+    public MainMenu getMenu() {
+        return menu;
+    }
+
+    /**
+     * @param zoneModelVue the zoneModelVue to set
+     */
+    public void setZoneModelVue(RectangleHV zoneModelVue) {
+        this.zoneModelVue = zoneModelVue;
     }
 
 }

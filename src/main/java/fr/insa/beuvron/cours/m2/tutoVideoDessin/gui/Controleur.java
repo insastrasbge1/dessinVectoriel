@@ -26,14 +26,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -47,7 +50,7 @@ public class Controleur {
 
     private int etat;
 
-    private double[] pos1 = new double[2];
+    private Point pos1;
 
     private List<Figure> selection;
 
@@ -79,9 +82,31 @@ public class Controleur {
         this.etat = nouvelEtat;
     }
 
-    void clicDansZoneDessin(MouseEvent t) {
+    /**
+     * transforme les coordonnées (xVue,yVue) dans le repère de la vue, en un
+     * point du modele en tenant compte de la transformation actuelle appliquée
+     * à la vue.
+     *
+     * @param xVue pos x dans la vue
+     * @param yVue pos y dans la vue
+     * @return un Point apprès application de la transformation vue --> model
+     */
+    public Point posInModel(double xVue, double yVue) {
+        Transform modelVersVue = this.vue.getcDessin().getTransform();
+        Point2D ptrans;
+        try {
+            ptrans = modelVersVue.inverseTransform(xVue, yVue);
+        } catch (NonInvertibleTransformException ex) {
+            throw new Error(ex);
+        }
+        Point pclic = new Point(ptrans.getX(), ptrans.getY());
+        pclic.setCouleur(this.vue.getCpCouleur().getValue());
+        return pclic;
+    }
+
+    public void clicDansZoneDessin(MouseEvent t) {
         if (this.etat == 20) {
-            Point pclic = new Point(t.getX(), t.getY());
+            Point pclic = this.posInModel(t.getX(), t.getY());
             // pas de limite de distance entre le clic et l'objet selectionné
             Figure proche = this.vue.getModel().plusProche(pclic, Double.MAX_VALUE);
             // il faut tout de même prévoir le cas ou le groupe est vide
@@ -103,37 +128,32 @@ public class Controleur {
                 this.vue.redrawAll();
             }
         } else if (this.etat == 30) {
-            double px = t.getX();
-            double py = t.getY();
-            Color col = this.vue.getCpCouleur().getValue();
+            Point pclic = this.posInModel(t.getX(), t.getY());
             Groupe model = this.vue.getModel();
-            model.add(new Point(px, py, col));
+            model.add(pclic);
             this.vue.redrawAll();
         } else if (this.etat == 40) {
-            this.pos1[0] = t.getX();
-            this.pos1[1] = t.getY();
+            this.pos1 = this.posInModel(t.getX(), t.getY());
             this.changeEtat(41);
         } else if (this.etat == 41) {
-            double px2 = t.getX();
-            double py2 = t.getY();
-            Color col = this.vue.getCpCouleur().getValue();
-            this.vue.getModel().add(
-                    new Segment(new Point(this.pos1[0], this.pos1[1]),
-                            new Point(px2, py2), col));
+            Point pclic = this.posInModel(t.getX(), t.getY());
+            Segment ns = new Segment(this.pos1, pclic, 
+            this.vue.getCpCouleur().getValue());
+            this.vue.getModel().add(ns);
             this.vue.redrawAll();
             this.changeEtat(40);
         }
     }
 
-    void boutonSelect(ActionEvent t) {
+    public void boutonSelect(ActionEvent t) {
         this.changeEtat(20);
     }
 
-    void boutonPoints(ActionEvent t) {
+    public void boutonPoints(ActionEvent t) {
         this.changeEtat(30);
     }
 
-    void boutonSegments(ActionEvent t) {
+    public void boutonSegments(ActionEvent t) {
         this.changeEtat(40);
     }
 
@@ -152,7 +172,7 @@ public class Controleur {
         return selection;
     }
 
-    void boutonGrouper(ActionEvent t) {
+    public void boutonGrouper(ActionEvent t) {
         if (this.etat == 20 && this.selection.size() > 1) {
             // normalement le bouton est disabled dans le cas contraire
             Groupe ssGroupe = this.vue.getModel().sousGroupe(selection);
@@ -162,7 +182,7 @@ public class Controleur {
         }
     }
 
-    void changeColor(Color value) {
+    public void changeColor(Color value) {
         if (this.etat == 20 && this.selection.size() > 0) {
             for (Figure f : this.selection) {
                 f.changeCouleur(value);
@@ -171,7 +191,7 @@ public class Controleur {
         }
     }
 
-    void realSave(File f) {
+    private void realSave(File f) {
         try {
             this.vue.getModel().sauvegarde(f);
             this.vue.setCurFile(f);
@@ -188,7 +208,7 @@ public class Controleur {
         }
     }
 
-    void menuSave(ActionEvent t) {
+    public void menuSave(ActionEvent t) {
         if (this.vue.getCurFile() == null) {
             this.menuSaveAs(t);
         } else {
@@ -196,7 +216,7 @@ public class Controleur {
         }
     }
 
-    void menuSaveAs(ActionEvent t) {
+    public void menuSaveAs(ActionEvent t) {
         FileChooser chooser = new FileChooser();
         File f = chooser.showSaveDialog(this.vue.getInStage());
         if (f != null) {
@@ -204,7 +224,7 @@ public class Controleur {
         }
     }
 
-    void menuOpen(ActionEvent t) {
+    public void menuOpen(ActionEvent t) {
         FileChooser chooser = new FileChooser();
         File f = chooser.showOpenDialog(this.vue.getInStage());
         if (f != null) {
@@ -230,7 +250,7 @@ public class Controleur {
     }
 //    }
 
-    void menuNouveau(ActionEvent t) {
+    public void menuNouveau(ActionEvent t) {
         Stage nouveau = new Stage();
         nouveau.setTitle("Nouveau");
         Scene sc = new Scene(new MainPane(nouveau), 800, 600);
@@ -238,7 +258,7 @@ public class Controleur {
         nouveau.show();
     }
 
-    void menuApropos(ActionEvent t) {
+    public void menuApropos(ActionEvent t) {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("A propos");
         alert.setHeaderText(null);
@@ -248,6 +268,21 @@ public class Controleur {
                 + "à l'INSA de Strasbourg");
 
         alert.showAndWait();
+    }
+
+    public void zoomDouble() {
+        this.vue.setZoneModelVue(this.vue.getZoneModelVue().scale(0.5));
+        this.vue.redrawAll();
+    }
+
+    public void zoomDemi() {
+        this.vue.setZoneModelVue(this.vue.getZoneModelVue().scale(2));
+        this.vue.redrawAll();
+    }
+
+    public void zoomFitAll() {
+        this.vue.fitAll();
+        this.vue.redrawAll();
     }
 
 }
