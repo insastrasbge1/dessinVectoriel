@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import recup.Lire;
@@ -151,6 +149,7 @@ public class Groupe extends Figure {
         Point p3 = new Point(100, 100);
         Point p4 = new Point(10, 100);
         Point p5 = new Point(50, 50);
+        Point p6 = new Point(500,500,Color.AQUAMARINE);
         Segment s1 = new Segment(p1, p2);
         Segment s2 = new Segment(p2, p3);
         Segment s3 = new Segment(p3, p1);
@@ -161,8 +160,18 @@ public class Groupe extends Figure {
         triangle.add(s3);
         Groupe res = new Groupe();
         res.add(p5);
+        res.add(p6);
         res.add(s4);
         res.add(triangle);
+        for(int i = 0 ; i < 10 ; i ++) {
+            res.add(new Point(Math.random()*500, Math.random()*500, 
+            Color.color(Math.random(), Math.random(), Math.random())));
+        }
+        for(int i = 0 ; i < 5 ; i ++) {
+            res.add(new Segment(new Point(Math.random()*500, Math.random()*500),
+                    new Point(Math.random()*500, Math.random()*500),
+                    Color.color(Math.random(), Math.random(), Math.random())));
+        }
         return res;
     }
 

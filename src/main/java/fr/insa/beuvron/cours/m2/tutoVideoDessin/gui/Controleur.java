@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
@@ -50,9 +48,11 @@ public class Controleur {
 
     private int etat;
 
-    private Point pos1;
+    private Point point1DansModel;
 
     private List<Figure> selection;
+
+    private Segment segmentEnCoursDeCreation = null;
 
     public Controleur(MainPane vue) {
         this.vue = vue;
@@ -63,23 +63,28 @@ public class Controleur {
         if (nouvelEtat == 20) {
             this.vue.getRbSelect().setSelected(true);
             this.selection.clear();
+            this.segmentEnCoursDeCreation = null;
             this.vue.redrawAll();
         } else if (nouvelEtat == 30) {
             // creation de points
             this.vue.getRbPoints().setSelected(true);
             this.selection.clear();
+            this.segmentEnCoursDeCreation = null;
             this.vue.getbGrouper().setDisable(true);
             this.vue.redrawAll();
         } else if (nouvelEtat == 40) {
             // creation de segments étape 1
             this.vue.getRbSegments().setSelected(true);
             this.selection.clear();
+            this.segmentEnCoursDeCreation = null;
             this.vue.getbGrouper().setDisable(true);
             this.vue.redrawAll();
         } else if (nouvelEtat == 41) {
             // creation de segments étape 2
         }
         this.etat = nouvelEtat;
+        this.activeBoutonsSuivantSelection();
+
     }
 
     /**
@@ -106,6 +111,7 @@ public class Controleur {
 
     public void clicDansZoneDessin(MouseEvent t) {
         if (this.etat == 20) {
+            // selection
             Point pclic = this.posInModel(t.getX(), t.getY());
             // pas de limite de distance entre le clic et l'objet selectionné
             Figure proche = this.vue.getModel().plusProche(pclic, Double.MAX_VALUE);
@@ -128,18 +134,25 @@ public class Controleur {
                 this.vue.redrawAll();
             }
         } else if (this.etat == 30) {
+            // creation points
             Point pclic = this.posInModel(t.getX(), t.getY());
             Groupe model = this.vue.getModel();
             model.add(pclic);
             this.vue.redrawAll();
         } else if (this.etat == 40) {
-            this.pos1 = this.posInModel(t.getX(), t.getY());
+            // creation segment premier point
+            this.point1DansModel = this.posInModel(t.getX(), t.getY());
+            this.segmentEnCoursDeCreation = new Segment(this.point1DansModel,
+                    new Point(this.point1DansModel),
+                    this.vue.getCpCouleur().getValue());
             this.changeEtat(41);
         } else if (this.etat == 41) {
+            // creation de segment deuxieme point
             Point pclic = this.posInModel(t.getX(), t.getY());
-            Segment ns = new Segment(this.pos1, pclic, 
-            this.vue.getCpCouleur().getValue());
+            Segment ns = new Segment(this.point1DansModel, pclic,
+                    this.vue.getCpCouleur().getValue());
             this.vue.getModel().add(ns);
+            this.segmentEnCoursDeCreation = null;
             this.vue.redrawAll();
             this.changeEtat(40);
         }
@@ -158,10 +171,15 @@ public class Controleur {
     }
 
     private void activeBoutonsSuivantSelection() {
-        if (this.selection.size() < 2) {
-            this.vue.getbGrouper().setDisable(true);
-        } else {
-            this.vue.getbGrouper().setDisable(false);
+        this.vue.getbGrouper().setDisable(true);
+        this.vue.getbSupprimer().setDisable(true);
+        if (this.etat == 20) {
+            if (this.selection.size() > 0) {
+                this.vue.getbSupprimer().setDisable(false);
+                if (this.selection.size() > 1) {
+                    this.vue.getbGrouper().setDisable(false);
+                }
+            }
         }
     }
 
@@ -178,6 +196,17 @@ public class Controleur {
             Groupe ssGroupe = this.vue.getModel().sousGroupe(selection);
             this.selection.clear();
             this.selection.add(ssGroupe);
+            this.activeBoutonsSuivantSelection();
+            this.vue.redrawAll();
+        }
+    }
+
+    public void boutonSupprimer(ActionEvent t) {
+        if (this.etat == 20 && this.selection.size() > 0) {
+            // normalement le bouton est disabled dans le cas contraire
+            this.vue.getModel().removeAll(this.selection);
+            this.selection.clear();
+            this.activeBoutonsSuivantSelection();
             this.vue.redrawAll();
         }
     }
@@ -188,6 +217,8 @@ public class Controleur {
                 f.changeCouleur(value);
             }
             this.vue.redrawAll();
+        } else if (this.etat == 41 && this.segmentEnCoursDeCreation != null) {
+            this.segmentEnCoursDeCreation.changeCouleur(value);
         }
     }
 
@@ -283,6 +314,41 @@ public class Controleur {
     public void zoomFitAll() {
         this.vue.fitAll();
         this.vue.redrawAll();
+    }
+
+    public void translateGauche() {
+         this.vue.setZoneModelVue(this.vue.getZoneModelVue().translateGauche(0.8));
+        this.vue.redrawAll();
+   }
+
+    public void translateDroite() {
+         this.vue.setZoneModelVue(this.vue.getZoneModelVue().translateDroite(0.8));
+        this.vue.redrawAll();
+   }
+
+    public void translateHaut() {
+         this.vue.setZoneModelVue(this.vue.getZoneModelVue().translateHaut(0.8));
+        this.vue.redrawAll();
+   }
+
+    public void translateBas() {
+         this.vue.setZoneModelVue(this.vue.getZoneModelVue().translateBas(0.8));
+        this.vue.redrawAll();
+   }
+
+    void mouseMovedDansZoneDessin(MouseEvent t) {
+        if (this.etat == 41) {
+            // attente deuxieme point segment
+            this.segmentEnCoursDeCreation.setFin(this.posInModel(t.getX(), t.getY()));
+            this.vue.redrawAll();
+        }
+    }
+
+    /**
+     * @return the segmentEnCoursDeCreation
+     */
+    public Segment getSegmentEnCoursDeCreation() {
+        return segmentEnCoursDeCreation;
     }
 
 }

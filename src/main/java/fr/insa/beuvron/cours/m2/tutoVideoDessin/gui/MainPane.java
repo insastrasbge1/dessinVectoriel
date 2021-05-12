@@ -30,6 +30,8 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -61,11 +63,17 @@ public class MainPane extends BorderPane {
     private RadioButton rbSegments;
 
     private Button bGrouper;
+    private Button bSupprimer;
     private ColorPicker cpCouleur;
 
-    private Button bZoomDouble;
-    private Button bZoomDemi;
-    private Button bZoomFitAll;
+    private BoutonIcone bZoomDouble;
+    private BoutonIcone bZoomDemi;
+    private BoutonIcone bZoomFitAll;
+    
+    private BoutonIcone bTranslateGauche;
+    private BoutonIcone bTranslateDroite;
+    private BoutonIcone bTranslateHaut;
+    private BoutonIcone bTranslateBas;
  
     private DessinCanvas cDessin;
     private RectangleHV zoneModelVue;
@@ -113,27 +121,58 @@ public class MainPane extends BorderPane {
         this.bGrouper.setOnAction((t) -> {
             this.controleur.boutonGrouper(t);
         });
+        this.bSupprimer = new Button("Supprimer");
+        this.bSupprimer.setOnAction((t) -> {
+            this.controleur.boutonSupprimer(t);
+        });
         this.cpCouleur = new ColorPicker(Color.BLACK);
         this.cpCouleur.setOnAction((t) -> {
             this.controleur.changeColor(this.cpCouleur.getValue());
         });
 
-        this.bZoomDouble = new Button("Zoom x2");
+        this.bZoomDouble = new BoutonIcone("icones/zoom-in.png",32,32);
         this.bZoomDouble.setOnAction((t) -> {
             this.controleur.zoomDouble();
         });
-        this.bZoomDemi = new Button("Zoom /2");
+        this.bZoomDemi = new BoutonIcone("icones/zoom-out.png",32,32);
         this.bZoomDemi.setOnAction((t) -> {
             this.controleur.zoomDemi();
         });
-        this.bZoomFitAll = new Button("Zoom Fit All");
+        this.bZoomFitAll = new BoutonIcone("icones/maximize.png",32,32);
         this.bZoomFitAll.setOnAction((t) -> {
             this.controleur.zoomFitAll();
         });
-        VBox vbZoom = new VBox(this.bZoomDouble, this.bZoomDemi, this.bZoomFitAll);
+        
+        this.bTranslateGauche = new BoutonIcone("icones/left-arrow.png",32,32);
+        this.bTranslateGauche.setOnAction((t) -> {
+            this.controleur.translateGauche();
+        });
+        this.bTranslateDroite = new BoutonIcone("icones/right-arrow.png",32,32);
+       this.bTranslateDroite.setOnAction((t) -> {
+            this.controleur.translateDroite();
+        });
+         this.bTranslateHaut = new BoutonIcone("icones/up-arrow.png",32,32);
+        this.bTranslateHaut.setOnAction((t) -> {
+            this.controleur.translateHaut();
+        });
+        this.bTranslateBas = new BoutonIcone("icones/down-arrow.png",32,32);
+       this.bTranslateBas.setOnAction((t) -> {
+            this.controleur.translateBas();
+        });
+         
+        HBox hbZoom = new HBox(this.bZoomDouble, this.bZoomDemi, this.bZoomFitAll);
+        
+        GridPane gpTrans = new GridPane();
+        // add(compo, column , row , columnSpan , rowSpan
+        gpTrans.add(this.bTranslateGauche, 0, 1,1,1);
+        gpTrans.add(this.bTranslateDroite, 2, 1,1,1);
+        gpTrans.add(this.bTranslateHaut, 1, 0,1,1);
+        gpTrans.add(this.bTranslateBas, 1, 2,1,1);
+        
+        VBox vbZoom = new VBox(hbZoom,gpTrans);
         vbZoom.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        VBox vbDroit = new VBox(this.bGrouper, this.cpCouleur, vbZoom);
+        VBox vbDroit = new VBox(this.bGrouper,this.bSupprimer, this.cpCouleur, vbZoom);
         this.setRight(vbDroit);
 
         this.cDessin = new DessinCanvas(this);
@@ -280,6 +319,13 @@ public class MainPane extends BorderPane {
      */
     public void setZoneModelVue(RectangleHV zoneModelVue) {
         this.zoneModelVue = zoneModelVue;
+    }
+
+    /**
+     * @return the bSupprimer
+     */
+    public Button getbSupprimer() {
+        return bSupprimer;
     }
 
 }

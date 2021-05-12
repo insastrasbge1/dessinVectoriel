@@ -18,9 +18,9 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.insa.beuvron.cours.m2.tutoVideoDessin.gui;
 
-import com.sun.javafx.geom.transform.Identity;
 import fr.insa.beuvron.cours.m2.tutoVideoDessin.Figure;
 import fr.insa.beuvron.cours.m2.tutoVideoDessin.Groupe;
+import fr.insa.beuvron.cours.m2.tutoVideoDessin.Segment;
 import java.util.List;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -42,7 +42,7 @@ public class DessinCanvas extends Pane {
     public DessinCanvas(MainPane main) {
         this.main = main;
         this.realCanvas = new Canvas(this.getWidth(), this.getHeight());
-        this.asRect = new RectangleHV(0,0,this.getWidth(),this.getHeight());
+        this.asRect = new RectangleHV(0, 0, this.getWidth(), this.getHeight());
         this.getChildren().add(this.realCanvas);
         this.realCanvas.heightProperty().bind(this.heightProperty());
         this.realCanvas.heightProperty().addListener((o) -> {
@@ -56,6 +56,9 @@ public class DessinCanvas extends Pane {
             Controleur control = this.main.getControleur();
             control.clicDansZoneDessin(t);
         });
+        this.realCanvas.setOnMouseMoved((t) -> {
+            this.main.getControleur().mouseMovedDansZoneDessin(t);
+        });
         this.redrawAll();
     }
 
@@ -68,7 +71,7 @@ public class DessinCanvas extends Pane {
     public void setTransform(Transform trans) {
         this.realCanvas.getGraphicsContext2D().setTransform(new Affine(trans));
     }
-    
+
     public Transform getTransform() {
         return this.realCanvas.getGraphicsContext2D().getTransform();
     }
@@ -88,6 +91,12 @@ public class DessinCanvas extends Pane {
             for (Figure f : select) {
                 f.dessineSelection(context);
             }
+        }
+        Segment enCOurs = this.main.getControleur().getSegmentEnCoursDeCreation();
+        if (enCOurs != null) {
+            context.setLineDashes(1, 1);
+            enCOurs.dessine(context);
+            context.setLineDashes(null);
         }
     }
 }

@@ -29,6 +29,20 @@ import javafx.scene.paint.Color;
  */
 public class Segment extends FigureSimple {
 
+    /**
+     * @param debut the debut to set
+     */
+    public void setDebut(Point debut) {
+        this.debut = debut;
+    }
+
+    /**
+     * @param fin the fin to set
+     */
+    public void setFin(Point fin) {
+        this.fin = fin;
+    }
+
     private Point debut;
     private Point fin;
 

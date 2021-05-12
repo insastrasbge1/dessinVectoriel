@@ -39,6 +39,11 @@ public class RectangleHV{
         this.yMin = yMin;
         this.yMax = yMax;
     }
+
+    @Override
+    public String toString() {
+        return "RectangleHV{" + "xMin=" + xMin + ", xMax=" + xMax + ", yMin=" + yMin + ", yMax=" + yMax + '}';
+    }
     
     /**
      * Calcule un rectangle ayant même centre, mais des cotés dont la taille
@@ -56,6 +61,36 @@ public class RectangleHV{
         double nymin = cy - (dy / 2) * facteur;
         double nymax = cy + (dy / 2) * facteur;
         return new RectangleHV(nxmin, nxmax, nymin, nymax);    
+    }
+    
+    /**
+     * calcule un nouveau rectangle décalé en horizontal vers la gauche tel
+     * que this et ce nouveau rectangle partage portionConservee surface.
+     * Ex si portionConservee = 0, le nouveau rectangle est à gauche de l'ancien.
+     * si portionConservee = 0.66, le nouveau rectangle est décalé de ~1/3 vers
+     * la gauche, les 2/3 qui étaient à droite de l'ancien rectangle se retrouve
+     * à gauche du nouveau.
+     * @param portionDeplacee {@code 0 <= portionDeplacee <= 1)
+     * @return un nouveau RectangleHV décalé à gauche par rapport à this
+     */
+    public RectangleHV translateGauche(double portionConservee) {
+        double dx = (this.xMax - this.xMin)*(1-portionConservee);
+        return new RectangleHV(this.xMin-dx,this.xMax-dx,this.yMin,this.yMax);
+    }
+    
+    public RectangleHV translateDroite(double portionConservee) {
+        double dx = (this.xMax - this.xMin)*(1-portionConservee);
+        return new RectangleHV(this.xMin+dx,this.xMax+dx,this.yMin,this.yMax);
+    }
+    
+    public RectangleHV translateHaut(double portionConservee) {
+        double dy = (this.yMax - this.yMin)*(1-portionConservee);
+        return new RectangleHV(this.xMin,this.xMax,this.yMin-dy,this.yMax-dy);
+    }
+    
+   public RectangleHV translateBas(double portionConservee) {
+        double dy = (this.yMax - this.yMin)*(1-portionConservee);
+        return new RectangleHV(this.xMin,this.xMax,this.yMin+dy,this.yMax+dy);
     }
     
     /**

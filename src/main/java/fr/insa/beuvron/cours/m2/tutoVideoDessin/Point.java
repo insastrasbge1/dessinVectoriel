@@ -50,6 +50,13 @@ public class Point extends FigureSimple {
     }
 
     /**
+     * initialise comme une copie du point
+     */
+    public Point(Point modele) {
+        this(modele.px,modele.px,modele.getCouleur());
+    }
+    
+    /**
      * @return the px
      */
     public double getPx() {
