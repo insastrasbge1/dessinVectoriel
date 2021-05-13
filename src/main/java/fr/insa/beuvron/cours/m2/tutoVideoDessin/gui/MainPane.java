@@ -130,32 +130,32 @@ public class MainPane extends BorderPane {
             this.controleur.changeColor(this.cpCouleur.getValue());
         });
 
-        this.bZoomDouble = new BoutonIcone("icones/zoom-in.png",32,32);
+        this.bZoomDouble = new BoutonIcone("icones/zoomPlus.png",32,32);
         this.bZoomDouble.setOnAction((t) -> {
             this.controleur.zoomDouble();
         });
-        this.bZoomDemi = new BoutonIcone("icones/zoom-out.png",32,32);
+        this.bZoomDemi = new BoutonIcone("icones/zoomMoins.png",32,32);
         this.bZoomDemi.setOnAction((t) -> {
             this.controleur.zoomDemi();
         });
-        this.bZoomFitAll = new BoutonIcone("icones/maximize.png",32,32);
+        this.bZoomFitAll = new BoutonIcone("icones/zoomTout.png",32,32);
         this.bZoomFitAll.setOnAction((t) -> {
             this.controleur.zoomFitAll();
         });
         
-        this.bTranslateGauche = new BoutonIcone("icones/left-arrow.png",32,32);
+        this.bTranslateGauche = new BoutonIcone("icones/gauche.png",32,32);
         this.bTranslateGauche.setOnAction((t) -> {
             this.controleur.translateGauche();
         });
-        this.bTranslateDroite = new BoutonIcone("icones/right-arrow.png",32,32);
+        this.bTranslateDroite = new BoutonIcone("icones/droite.png",32,32);
        this.bTranslateDroite.setOnAction((t) -> {
             this.controleur.translateDroite();
         });
-         this.bTranslateHaut = new BoutonIcone("icones/up-arrow.png",32,32);
+         this.bTranslateHaut = new BoutonIcone("icones/haut.png",32,32);
         this.bTranslateHaut.setOnAction((t) -> {
             this.controleur.translateHaut();
         });
-        this.bTranslateBas = new BoutonIcone("icones/down-arrow.png",32,32);
+        this.bTranslateBas = new BoutonIcone("icones/bas.png",32,32);
        this.bTranslateBas.setOnAction((t) -> {
             this.controleur.translateBas();
         });
