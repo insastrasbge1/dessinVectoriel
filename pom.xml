@@ -37,7 +37,8 @@
                 </configuration>
             </plugin>
             
-            <!-- voir https://dev.to/cherrychain/javafx-jlink-and-jpackage-h9 
+            <!-- voir https://github.com/openjfx/javafx-maven-plugin
+            https://dev.to/cherrychain/javafx-jlink-and-jpackage-h9 
             maven goals : 
             pour run : javafx:run
             pour creer programme standalone : javafx:jlink 
@@ -51,11 +52,14 @@
                     <noHeaderFiles>true</noHeaderFiles>
                     <stripDebug>true</stripDebug>
                     <noManPages>true</noManPages>
-                    <launcher>TutoVideoDessin</launcher>
-                    <vendor>FdB</vendor>
                     <mainClass>TutoVideoDessin/fr.insa.beuvron.cours.m2.tutoVideoDessin.gui.Main</mainClass>
+                    <launcher>TutoVideoDessin</launcher>
                     <jlinkImageName>TutoVideoDessin</jlinkImageName>
-                    <jlinkZipName>TutoVideoDessin</jlinkZipName>
+<!-- pour zipper le dossier image
+ je ne le fais pas car je veux créer d'abord un raccourci vers le launcher
+                <jlinkZipName>TutoVideoDessin</jlinkZipName>
+-->
+                    <vendor>FdB</vendor>
                 </configuration>
                 <executions>
                     <execution>
@@ -64,7 +68,8 @@
                         <id>default-cli</id>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>        
+
         </plugins>
         
         <resources>
