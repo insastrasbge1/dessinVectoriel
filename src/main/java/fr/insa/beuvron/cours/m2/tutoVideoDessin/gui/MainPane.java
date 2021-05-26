@@ -74,6 +74,8 @@ public class MainPane extends BorderPane {
     private BoutonIcone bTranslateDroite;
     private BoutonIcone bTranslateHaut;
     private BoutonIcone bTranslateBas;
+    
+    private Button bCreePointDialog;
  
     private DessinCanvas cDessin;
     private RectangleHV zoneModelVue;
@@ -99,11 +101,11 @@ public class MainPane extends BorderPane {
         this.rbSelect.setOnAction((t) -> {
             this.controleur.boutonSelect(t);
         });
-        this.rbPoints = new RadioButton("Points");
+        this.rbPoints = new RadioButton("Crée Points");
         this.rbPoints.setOnAction((t) -> {
             this.controleur.boutonPoints(t);
         });
-        this.rbSegments = new RadioButton("Segments");
+        this.rbSegments = new RadioButton("Crée Segments");
         this.rbSegments.setOnAction((t) -> {
             this.controleur.boutonSegments(t);
         });
@@ -120,6 +122,10 @@ public class MainPane extends BorderPane {
         this.bGrouper = new Button("Grouper");
         this.bGrouper.setOnAction((t) -> {
             this.controleur.boutonGrouper(t);
+        });
+        
+        this.bGrouper.setOnMouseEntered((t) -> {
+            System.out.println("entre dans bgroupe");
         });
         this.bSupprimer = new Button("Supprimer");
         this.bSupprimer.setOnAction((t) -> {
@@ -169,10 +175,16 @@ public class MainPane extends BorderPane {
         gpTrans.add(this.bTranslateHaut, 1, 0,1,1);
         gpTrans.add(this.bTranslateBas, 1, 2,1,1);
         
+        
         VBox vbZoom = new VBox(hbZoom,gpTrans);
         vbZoom.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        VBox vbDroit = new VBox(this.bGrouper,this.bSupprimer, this.cpCouleur, vbZoom);
+       this.bCreePointDialog = new Button("Point par coord");
+        this.bCreePointDialog.setOnAction((t) -> {
+            this.controleur.creePointParDialog();
+        });
+        
+         VBox vbDroit = new VBox(this.bGrouper,this.bSupprimer, this.cpCouleur, vbZoom,this.bCreePointDialog);
         this.setRight(vbDroit);
 
         this.cDessin = new DessinCanvas(this);

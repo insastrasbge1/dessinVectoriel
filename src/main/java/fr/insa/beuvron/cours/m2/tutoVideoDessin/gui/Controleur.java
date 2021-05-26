@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
@@ -349,6 +350,14 @@ public class Controleur {
      */
     public Segment getSegmentEnCoursDeCreation() {
         return segmentEnCoursDeCreation;
+    }
+
+    void creePointParDialog() {
+        Optional<Point> p = EnterPointDialog.demandePoint();
+        if (p.isPresent()) {
+            this.vue.getModel().add(p.get());
+            this.vue.redrawAll();
+        }
     }
 
 }
