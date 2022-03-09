@@ -19,6 +19,7 @@ along with CoursBeuvron.  If not, see <http://www.gnu.org/licenses/>.
 package fr.insa.beuvron.cours.m2.tutoVideoDessin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class Groupe extends Figure {
         Point p3 = new Point(100, 100);
         Point p4 = new Point(10, 100);
         Point p5 = new Point(50, 50);
-        Point p6 = new Point(500,500,Color.AQUAMARINE);
+        Point p6 = new Point(500, 500, Color.AQUAMARINE);
         Segment s1 = new Segment(p1, p2);
         Segment s2 = new Segment(p2, p3);
         Segment s3 = new Segment(p3, p1);
@@ -163,13 +164,13 @@ public class Groupe extends Figure {
         res.add(p6);
         res.add(s4);
         res.add(triangle);
-        for(int i = 0 ; i < 10 ; i ++) {
-            res.add(new Point(Math.random()*500, Math.random()*500, 
-            Color.color(Math.random(), Math.random(), Math.random())));
+        for (int i = 0; i < 10; i++) {
+            res.add(new Point(Math.random() * 500, Math.random() * 500,
+                    Color.color(Math.random(), Math.random(), Math.random())));
         }
-        for(int i = 0 ; i < 5 ; i ++) {
-            res.add(new Segment(new Point(Math.random()*500, Math.random()*500),
-                    new Point(Math.random()*500, Math.random()*500),
+        for (int i = 0; i < 5; i++) {
+            res.add(new Segment(new Point(Math.random() * 500, Math.random() * 500),
+                    new Point(Math.random() * 500, Math.random() * 500),
                     Color.color(Math.random(), Math.random(), Math.random())));
         }
         return res;
@@ -230,6 +231,8 @@ public class Groupe extends Figure {
     public void menuTexte() {
         int rep = -1;
         while (rep != 0) {
+            System.out.println("Gestion textuelle d'un groupe de figure");
+            System.out.println("---------------------------------------");
             System.out.println("1) afficher le groupe");
             System.out.println("2) ajouter un point");
             System.out.println("3) ajouter un segment avec deux nouveaux points");
@@ -238,6 +241,7 @@ public class Groupe extends Figure {
             System.out.println("6) afficher le rectangle englobant");
             System.out.println("7) calculer la distance à un point");
             System.out.println("8) retirer des figures du groupe");
+            System.out.println("9) sauvegarder le groupe dans un fichier");
             System.out.println("0) quitter");
             System.out.println("votre choix : ");
             rep = Lire.i();
@@ -273,6 +277,20 @@ public class Groupe extends Figure {
             } else if (rep == 8) {
                 List<Figure> select = this.choisiFigures();
                 this.removeAll(select);
+            } else if (rep == 9) {
+                System.out.println("répertoire courant : ");
+                System.out.println(System.getProperty("user.dir"));
+                System.out.println("entrez le chemin du fichier où sauvegarder le groupe de figure : ");
+                String path = Lire.S();
+                File fout = new File(path);
+                try {
+                    this.sauvegarde(fout);
+                } catch (FileNotFoundException ex) {
+                    System.out.println("fichier non trouvé : " + fout.getAbsolutePath());;
+                } catch (IOException ex) {
+                    System.out.println("problème de lecture : " + ex.getLocalizedMessage());;
+                }
+
             }
         }
     }
@@ -282,7 +300,8 @@ public class Groupe extends Figure {
     }
 
     public static void testMenu() {
-        Groupe g = groupeTest();
+//        Groupe g = groupeTest();
+        Groupe g = new Groupe();
         g.menuTexte();
     }
 
@@ -324,13 +343,13 @@ public class Groupe extends Figure {
         }
     }
 
-    public static void main(String[] args) {
-//        test1();
+//    public static void main(String[] args) {
+////        test1();
 //        testMenu();
-//        exempleProblemeSauvegarde();
-        testLecture();
-    }
-
+////        exempleProblemeSauvegarde();
+////        testLecture();
+//    }
+//
     /**
      * abscice maximale d'un groupe de figures. 0 si le groupe est vide.
      */
