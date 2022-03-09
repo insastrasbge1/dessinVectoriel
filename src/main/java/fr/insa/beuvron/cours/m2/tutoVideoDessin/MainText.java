@@ -25,7 +25,7 @@ import java.util.List;
 import recup.Lire;
 
 /**
- *
+ * Classe principale pour lancer la gestion d'un dessin en mode console
  * @author francois
  */
 public class MainText {
