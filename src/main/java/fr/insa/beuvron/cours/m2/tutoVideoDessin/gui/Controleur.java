@@ -62,11 +62,13 @@ public class Controleur {
 
     public void changeEtat(int nouvelEtat) {
         if (nouvelEtat == 20) {
+            this.vue.changeMessage("clic pour selection ; <shift> + clic : ajouter ; <ctrl> + clic : ajouter/enlever");
             this.vue.getRbSelect().setSelected(true);
             this.selection.clear();
             this.segmentEnCoursDeCreation = null;
             this.vue.redrawAll();
         } else if (nouvelEtat == 30) {
+            this.vue.changeMessage("clic pour créer un point");
             // creation de points
             this.vue.getRbPoints().setSelected(true);
             this.selection.clear();
@@ -74,6 +76,7 @@ public class Controleur {
             this.vue.getbGrouper().setDisable(true);
             this.vue.redrawAll();
         } else if (nouvelEtat == 40) {
+            this.vue.changeMessage("clic pour définir le début du segment");
             // creation de segments étape 1
             this.vue.getRbSegments().setSelected(true);
             this.selection.clear();
@@ -81,6 +84,7 @@ public class Controleur {
             this.vue.getbGrouper().setDisable(true);
             this.vue.redrawAll();
         } else if (nouvelEtat == 41) {
+            this.vue.changeMessage("clic pour définir la fin du segment");
             // creation de segments étape 2
         }
         this.etat = nouvelEtat;

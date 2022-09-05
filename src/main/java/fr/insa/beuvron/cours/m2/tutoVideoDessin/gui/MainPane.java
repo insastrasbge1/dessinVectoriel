@@ -23,6 +23,7 @@ import java.io.File;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
@@ -79,6 +80,8 @@ public class MainPane extends BorderPane {
  
     private DessinCanvas cDessin;
     private RectangleHV zoneModelVue;
+    
+    private TextField tfMessage;
 
     private MainMenu menu;
 
@@ -192,9 +195,16 @@ public class MainPane extends BorderPane {
 
         this.menu = new MainMenu(this);
         this.setTop(this.menu);
+        
+        this.tfMessage = new TextField();
+        this.setBottom(this.tfMessage);
 
         this.controleur.changeEtat(20);
 
+    }
+    
+    public void changeMessage(String message) {
+        this.tfMessage.setText(message);
     }
 
     public void fitAll() {
