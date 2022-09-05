@@ -146,4 +146,15 @@ public class Point extends FigureSimple {
         }
     }
 
+    @Override
+    public Point copie() {
+        return new Point(this.px, this.py, this.getCouleur());
+    }
+
+    @Override
+    public void deplace(double dx, double dy) {
+        this.px += dx;
+        this.py += dy;
+    }
+
 }

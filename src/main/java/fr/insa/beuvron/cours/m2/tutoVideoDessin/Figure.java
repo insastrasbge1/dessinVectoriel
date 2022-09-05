@@ -56,6 +56,14 @@ public abstract class Figure {
     public abstract double maxY();
 
     public abstract double minY();
+    
+    public double centreX() {
+        return (this.maxX()+this.minX())/2;
+    }
+    
+    public double centreY() {
+        return (this.maxY()+this.minY()) /2;
+    }
 
     public abstract double distancePoint(Point p);
 
@@ -66,6 +74,10 @@ public abstract class Figure {
     public abstract void changeCouleur(Color value);
 
     public abstract void save(Writer w, Numeroteur<Figure> num) throws IOException;
+    
+    public abstract Figure copie();
+    
+    public abstract void deplace(double dx,double dy);
 
     public void sauvegarde(File fout) throws IOException {
         Numeroteur<Figure> num = new Numeroteur<Figure>();

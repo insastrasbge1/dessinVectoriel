@@ -146,4 +146,15 @@ public class Segment extends FigureSimple {
         }
     }
 
+    @Override
+    public Segment copie() {
+        return new Segment(this.debut.copie(), this.fin.copie(),this.getCouleur());
+    }
+
+    @Override
+    public void deplace(double dx, double dy) {
+        this.debut.deplace(dx, dy);
+        this.fin.deplace(dx, dy);
+    }
+
 }

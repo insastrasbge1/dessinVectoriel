@@ -62,6 +62,7 @@ public class MainPane extends BorderPane {
     private RadioButton rbSelect;
     private RadioButton rbPoints;
     private RadioButton rbSegments;
+    private RadioButton rbDupliquer;
 
     private Button bGrouper;
     private Button bSupprimer;
@@ -113,13 +114,20 @@ public class MainPane extends BorderPane {
             this.controleur.boutonSegments(t);
         });
 
+        this.rbDupliquer = new RadioButton("Dupliquer");
+        this.rbDupliquer.setDisable(true);
+        this.rbDupliquer.setOnAction((t) -> {
+            this.controleur.boutonDupliquer(t);
+        });
+
         ToggleGroup bgEtat = new ToggleGroup();
         this.rbSelect.setToggleGroup(bgEtat);
         this.rbPoints.setToggleGroup(bgEtat);
         this.rbSegments.setToggleGroup(bgEtat);
+        this.rbDupliquer.setToggleGroup(bgEtat);
         this.rbPoints.setSelected(true);
 
-        VBox vbGauche = new VBox(this.rbSelect, this.rbPoints, this.rbSegments);
+        VBox vbGauche = new VBox(this.rbSelect, this.rbPoints, this.rbSegments,this.rbDupliquer);
         this.setLeft(vbGauche);
 
         this.bGrouper = new Button("Grouper");
@@ -348,6 +356,13 @@ public class MainPane extends BorderPane {
      */
     public Button getbSupprimer() {
         return bSupprimer;
+    }
+
+    /**
+     * @return the bDupliquer
+     */
+    public RadioButton getRbDupliquer() {
+        return rbDupliquer;
     }
 
 }

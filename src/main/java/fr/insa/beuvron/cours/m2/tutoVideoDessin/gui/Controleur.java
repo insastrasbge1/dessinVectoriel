@@ -86,6 +86,8 @@ public class Controleur {
         } else if (nouvelEtat == 41) {
             this.vue.changeMessage("clic pour définir la fin du segment");
             // creation de segments étape 2
+        } else if (nouvelEtat == 50) {
+            this.vue.changeMessage("cliquez pour dupliquer la selection courante");
         }
         this.etat = nouvelEtat;
         this.activeBoutonsSuivantSelection();
@@ -160,6 +162,24 @@ public class Controleur {
             this.segmentEnCoursDeCreation = null;
             this.vue.redrawAll();
             this.changeEtat(40);
+        } else if (this.etat == 50) {
+            Point pclic = this.posInModel(t.getX(), t.getY());
+            Groupe pourCentre = new Groupe();
+            for(Figure f : this.selection) {
+                pourCentre.add(f.copie());
+            }
+            double scx = pourCentre.centreX();
+            double scy = pourCentre.centreY();
+            double dx = pclic.getPx() - scx;
+            double dy = pclic.getPy() - scy;
+            pourCentre.deplace(dx, dy);
+            // une figure ne peut pas appartenir à deux groupes
+            List<Figure> copie = new ArrayList<>(pourCentre.getContient());
+            pourCentre.clear();
+            for(Figure f : copie) {
+                this.vue.getModel().add(f);
+            }
+            this.vue.redrawAll();
         }
     }
 
@@ -178,9 +198,11 @@ public class Controleur {
     private void activeBoutonsSuivantSelection() {
         this.vue.getbGrouper().setDisable(true);
         this.vue.getbSupprimer().setDisable(true);
+        this.vue.getRbDupliquer().setDisable(true);
         if (this.etat == 20) {
             if (this.selection.size() > 0) {
                 this.vue.getbSupprimer().setDisable(false);
+                this.vue.getRbDupliquer().setDisable(false);
                 if (this.selection.size() > 1) {
                     this.vue.getbGrouper().setDisable(false);
                 }
@@ -213,6 +235,13 @@ public class Controleur {
             this.selection.clear();
             this.activeBoutonsSuivantSelection();
             this.vue.redrawAll();
+        }
+    }
+
+    public void boutonDupliquer(ActionEvent t) {
+        if (this.etat == 20 && this.selection.size() > 0) {
+            // normalement le bouton est disabled dans le cas contraire
+            this.changeEtat(50);
         }
     }
 

@@ -43,7 +43,7 @@ public class Groupe extends Figure {
     public Groupe() {
         this.contient = new ArrayList<Figure>();
     }
-
+    
     public void add(Figure f) {
         if (f.getGroupe() != this) {
             if (f.getGroupe() != null) {
@@ -475,6 +475,22 @@ public class Groupe extends Figure {
                 w.append(";" + num.getID(f));
             }
             w.append("\n");
+        }
+    }
+
+    @Override
+    public Groupe copie() {
+        Groupe res = new Groupe();
+        for (Figure f: this.contient) {
+            res.add(f.copie());
+        }
+        return res;
+    }
+
+    @Override
+    public void deplace(double dx, double dy) {
+        for (Figure f : this.contient) {
+            f.deplace(dx, dy);
         }
     }
 
