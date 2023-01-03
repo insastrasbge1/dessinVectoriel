@@ -50,4 +50,11 @@
                 <goal>javafx:run</goal>
             </goals>
         </action>
+        <action>
+            <actionName>CUSTOM-createExec</actionName>
+            <displayName>createExec</displayName>
+            <goals>
+                <goal>javafx:jlink</goal>
+            </goals>
+        </action>
     </actions>
